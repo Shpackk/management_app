@@ -10,18 +10,24 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User {
-  id    Int     @id @default(autoincrement())
-  email String  @unique
-  name  String?
-  posts Post[]
+enum Role {
+  USER
+  ADMIN
 }
 
-model Post {
-  id        Int     @id @default(autoincrement())
-  title     String
-  content   String?
-  published Boolean @default(false)
-  author    User    @relation(fields: [authorId], references: [id])
-  authorId  Int
+model User {
+  id             Int       @id @default(autoincrement())
+  name           String    @unique
+  role           Role      @default(USER)
+  store_location String?
+  requests       Request[]
+}
+
+model Request {
+  id           Int      @id @default(autoincrement())
+  summary      Json[]
+  requestPrice Int
+  user         User     @relation(fields: [userId], references: [id])
+  userId       Int
+  createdAt    DateTime @default(now())
 }
